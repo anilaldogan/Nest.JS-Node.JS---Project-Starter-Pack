@@ -18,6 +18,7 @@ import { VehiclesService } from './vehicles.service';
 import { vehiclesDto } from './dto/vehicles.dto';
 import { HttpMessage } from 'src/common/utils/messages/http-message.enum';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { userDto } from './dto/user.dto';
 
 @ApiBearerAuth()
 @ApiTags('Vehicles')
@@ -65,6 +66,37 @@ export class VehiclesController {
     return await this.vehiclesService.createVehicle(body);
   }
 
+  @Post('/:id')
+  async assignVehicleToUser(
+    @LoggedUser() user: User,
+    @Body() body: userDto,
+    @Param(
+      'id',
+      new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
+    )
+    id: string,
+  ) {
+    const vehicle = await this.vehiclesService.getVehicleById(id);
+
+    if (!vehicle) {
+      throw new HttpException(
+        HttpMessage.VEHICLE_NOT_FOUND,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const userExisting = await this.vehiclesService.getUserByID(body.user);
+
+    if (!userExisting) {
+      throw new HttpException(
+        HttpMessage.USER_NOT_FOUND,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return await this.vehiclesService.assignVehicleToUser(vehicle, userExisting) ? HttpMessage.VEHICLE_ASSIGNED : HttpMessage.VEHICLE_NOT_ASSIGNED;
+  }
+
   @Put('/:id')
   async updateVehicle(
     @LoggedUser() user: User,
@@ -101,12 +133,12 @@ export class VehiclesController {
 
   @Delete('/:id')
   async deleteVehicleById(
-    @LoggedUser() user: User, 
+    @LoggedUser() user: User,
     @Param(
       'id',
       new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE }),
     )
-    id: string, 
+    id: string,
   ) {
     //User isAdmin checks can be made
     const vehicle = await this.vehiclesService.getVehicleById(id);

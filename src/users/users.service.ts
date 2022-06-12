@@ -11,7 +11,7 @@ export class UsersService {
     private usersRepository: Repository<User>,
   ) {}
 
-  findAll(): Promise<User[]> {
+  async users(): Promise<User[]> {
     return this.usersRepository.find();
   }
 
@@ -44,7 +44,7 @@ export class UsersService {
     );
   }
 
-  findId(id: number): Promise<User> {
+  findId(id: string): Promise<User> {
     return this.usersRepository.findOne(
       id,
       /* { cache: { id: `user-${id}`, milliseconds: 10 * 1000, }, */

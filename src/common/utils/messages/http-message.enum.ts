@@ -10,4 +10,6 @@ export enum HttpMessage {
 
   VEHICLE_NOT_FOUND = 'Vehicle not found',
   VEHICLE_PLATE_ALREADY_EXISTS = 'Vehicle plate already exists',
+  VEHICLE_NOT_ASSIGNED = 'Vehicle not assigned to user',
+  VEHICLE_ASSIGNED = 'Vehicle assigned to user',
 }

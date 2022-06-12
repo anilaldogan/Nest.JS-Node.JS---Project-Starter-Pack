@@ -12,7 +12,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUserById(id: number) {
+  async validateUserById(id: string) {
     const user = await this.usersService.findId(id);
     if (user) {
       return user;

@@ -48,6 +48,15 @@ export class UsersController {
     };
   }
 
+  @Get('users')
+  @ApiBearerAuth()
+  @UseGuards(LoginGuard)
+  async users() {
+    return await this.usersService.users().then((result) => {
+      return result.map( user => this.usersService.maskUser(user));
+    });
+  }
+
   @Put('me')
   @ApiBearerAuth()
   @UseGuards(LoginGuard)
